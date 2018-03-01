@@ -1,4 +1,23 @@
 {
+    "name": "the-baltazartv-dota-app",
+    "description": "TheBaltazarTV Dota 1 Videos",
+    "version": "1.0.0",
+    "main": ".roadhogrc.mock.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/hostelix/the-baltazartv-dota-app.git"
+    },
+    "keywords": [
+        "dota",
+        "youtube-api",
+        "firebase"
+    ],
+    "author": "Israel Lugo",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/hostelix/the-baltazartv-dota-app/issues"
+    },
+    "homepage": "https://github.com/hostelix/the-baltazartv-dota-app#readme",
     "scripts": {
         "start": "roadhog server",
         "build": "roadhog build",
@@ -25,24 +44,5 @@
         "husky": "^0.12.0",
         "redbox-react": "^1.4.3",
         "roadhog": "^2.0.0"
-    },
-    "name": "the-baltazartv-dota-app",
-    "description": "TheBaltazarTV Dota 1 Videos",
-    "version": "1.0.0",
-    "main": ".roadhogrc.mock.js",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/hostelix/the-baltazartv-dota-app.git"
-    },
-    "keywords": [
-        "dota",
-        "youtube-api",
-        "firebase"
-    ],
-    "author": "Israel Lugo",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/hostelix/the-baltazartv-dota-app/issues"
-    },
-    "homepage": "https://github.com/hostelix/the-baltazartv-dota-app#readme"
+    }
 }

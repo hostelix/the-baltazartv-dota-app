@@ -23,7 +23,7 @@
         "build": "roadhog build",
         "lint": "eslint --ext .js src test",
         "precommit": "npm run lint",
-        "electron-dev": "ELECTRON_START_URL=http://localhost:3000 electron main.js"
+        "electron-dev": "ELECTRON_START_URL=http://localhost:3000 DEV=true electron main.js"
     },
     "dependencies": {
         "antd": "^3.2.2",

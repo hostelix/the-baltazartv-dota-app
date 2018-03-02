@@ -1,2 +1,6 @@
-# the-baltazartv-dota-app
-TheBaltazarTV Dota 1 Videos
+# TheBaltazarTV Dota 1 Videos
+
+
+## Run Dev App
+- npm run dev
+

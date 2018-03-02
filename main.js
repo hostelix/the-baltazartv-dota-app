@@ -1,55 +1,53 @@
-/*import {app, BrowserWindow} from 'electron';
-import path from 'path';
-import url from 'url';*/
-
-const {app, BrowserWindow} = require('electron');
+const electron = require('electron');
+const app = electron.app;
 const path = require('path');
 const url = require('url');
 
 let win;
 
 const isDevelopmentServer = () => {
-  return process.env.DEV || false;
+    return process.env.DEV || false;
 };
 
 const getURL = () => {
+    if (isDevelopmentServer()) {
+        return process.env.ELECTRON_START_URL;
+    }
 
-  if (isDevelopmentServer()) {
-    return process.env.ELECTRON_START_URL;
-  }
-
-  return url.format({
-    pathname: path.join(__dirname, 'dist/index.html'),
-    protocol: 'file:',
-    slashes: true
-  });
+    return url.format({
+        pathname: path.join(__dirname, 'dist/index.html'),
+        protocol: 'file:',
+        slashes: true
+    });
 };
 
 const createMainWindow = () => {
 
-  win = new BrowserWindow({width: 800, height: 600});
+    const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
 
-  win.loadURL(getURL());
+    win = new electron.BrowserWindow({width, height});
 
-  if (isDevelopmentServer()) {
-    win.webContents.openDevTools();
-  }
+    win.loadURL(getURL());
 
-  win.on('closed', () => {
-    win = null
-  });
+    if (isDevelopmentServer()) {
+        win.webContents.openDevTools();
+    }
+
+    win.on('closed', () => {
+        win = null
+    });
 };
 
 app.on('ready', createMainWindow);
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
+    if (process.platform !== 'darwin') {
+        app.quit()
+    }
 });
 
 app.on('activate', () => {
-  if (win === null) {
-    createMainWindow()
-  }
+    if (win === null) {
+        createMainWindow()
+    }
 });

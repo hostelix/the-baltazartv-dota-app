@@ -1,51 +1,51 @@
 {
-  "name": "the-baltazartv-dota-app",
-  "description": "TheBaltazarTV Dota 1 Videos",
-  "version": "1.0.0",
-  "main": ".roadhogrc.mock.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/hostelix/the-baltazartv-dota-app.git"
-  },
-  "keywords": [
-    "dota",
-    "youtube-api",
-    "firebase"
-  ],
-  "author": "Israel Lugo",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/hostelix/the-baltazartv-dota-app/issues"
-  },
-  "homepage": "https://github.com/hostelix/the-baltazartv-dota-app#readme",
-  "dependencies": {
-    "antd": "^3.2.2",
-    "babel-plugin-import": "^1.6.5",
-    "dva": "^2.1.0",
-    "path": "^0.12.7",
-    "react": "^16.2.0",
-    "react-dom": "^16.2.0"
-  },
-  "devDependencies": {
-    "babel-plugin-dva-hmr": "^0.3.2",
-    "electron": "^1.8.2",
-    "eslint": "^4.14.0",
-    "eslint-config-umi": "^0.1.1",
-    "eslint-plugin-flowtype": "^2.34.1",
-    "eslint-plugin-import": "^2.6.0",
-    "eslint-plugin-jsx-a11y": "^5.1.1",
-    "eslint-plugin-react": "^7.1.0",
-    "foreman": "^2.0.0",
-    "husky": "^0.12.0",
-    "redbox-react": "^1.4.3",
-    "roadhog": "^2.0.0"
-  },
-  "scripts": {
-    "start": "BROWSER=none roadhog server",
-    "build": "roadhog build",
-    "lint": "eslint --ext .js src test",
-    "precommit": "npm run lint",
-    "electron-dev": "ELECTRON_START_URL=http://localhost:5000 DEV=true electron main.js",
-    "dev": "nf start"
-  }
+    "name": "the-baltazartv-dota-app",
+    "description": "TheBaltazarTV Dota 1 Videos",
+    "version": "1.0.0",
+    "main": ".roadhogrc.mock.js",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/hostelix/the-baltazartv-dota-app.git"
+    },
+    "keywords": [
+        "dota",
+        "youtube-api",
+        "firebase"
+    ],
+    "author": "Israel Lugo",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/hostelix/the-baltazartv-dota-app/issues"
+    },
+    "homepage": "https://github.com/hostelix/the-baltazartv-dota-app#readme",
+    "dependencies": {
+        "antd": "^3.2.2",
+        "babel-plugin-import": "^1.6.5",
+        "dva": "^2.1.0",
+        "path": "^0.12.7",
+        "react": "^16.2.0",
+        "react-dom": "^16.2.0"
+    },
+    "devDependencies": {
+        "babel-plugin-dva-hmr": "^0.3.2",
+        "electron": "^1.8.2",
+        "eslint": "^4.14.0",
+        "eslint-config-umi": "^0.1.1",
+        "eslint-plugin-flowtype": "^2.34.1",
+        "eslint-plugin-import": "^2.6.0",
+        "eslint-plugin-jsx-a11y": "^5.1.1",
+        "eslint-plugin-react": "^7.1.0",
+        "foreman": "^2.0.0",
+        "husky": "^0.12.0",
+        "redbox-react": "^1.4.3",
+        "roadhog": "^2.0.0"
+    },
+    "scripts": {
+        "start": "BROWSER=none roadhog server",
+        "build": "roadhog build",
+        "lint": "eslint --ext .js src test",
+        "precommit": "npm run lint",
+        "electron-dev": "ELECTRON_START_URL=http://localhost:5000 DEV=true electron main.js",
+        "dev": "nf start"
+    }
 }

@@ -30,7 +30,7 @@ const createMainWindow = () => {
     win.loadURL(getURL());
 
     if (isDevelopmentServer()) {
-        win.webContents.openDevTools();
+        //win.webContents.openDevTools();
     }
 
     win.on('closed', () => {

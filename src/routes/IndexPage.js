@@ -1,11 +1,23 @@
 import React from 'react';
 import {connect} from 'dva';
-import {Layout, Menu, Divider, Icon, Input, Avatar} from 'antd';
+import {
+    Layout,
+    Menu,
+    Divider,
+    Icon,
+    Input,
+    Avatar,
+    Card,
+    Col,
+    Row,
+    Spin
+} from 'antd';
 import * as firebase from 'firebase';
 import firebase_config from '../config/firebase';
 import * as _ from 'lodash';
 
 const {Header, Content, Footer} = Layout;
+const {Meta} = Card;
 
 const data_menu = {
     streaks: [
@@ -34,7 +46,8 @@ class IndexPage extends React.Component {
 
         this.state = {
             currentMenu: 'home',
-            heroes: []
+            heroes: [],
+            loadingIndex: false
         };
     }
 
@@ -69,22 +82,27 @@ class IndexPage extends React.Component {
         return ''
     }
 
+    capitalize(str) {
+        return str.replace(/\b\w/g, l => l.toUpperCase());
+    }
+
     createMenuHeroes() {
         return _.map(_.groupBy(this.state.heroes, "afiliation"), (listHeroes, title) => {
             return (
-                <Menu.SubMenu key={'menu' + title} title={title}>
+                <Menu.SubMenu key={'menu' + title} title={this.capitalize(title)}>
                     {
                         _.map(_.groupBy(listHeroes, "attribute"), (list2, title2) => {
 
                             return (
-                                <Menu.SubMenu key={'menu' + title2} title={title2}>
+                                <Menu.SubMenu key={'menu' + title2} title={this.capitalize(title2)}>
                                     {
                                         list2.map((hero) => {
                                             const url = "https://firebasestorage.googleapis.com/v0/b/the-baltazartv-dota-1.appspot.com/o/heroes%2F" + hero.id + ".png?alt=media&token=f2add21a-3458-4bd6-9c1f-f0d4ad10c620"
                                             return <Menu.Item key={hero.id}>
-                                                <Avatar shape="square" size="large" src={url}/>
-                                                {hero.name}
-                                                </Menu.Item>
+                                                <Avatar style={{marginRight: 12}} shape="square" size="large"
+                                                        src={url}/>
+                                                {`${hero.name} (${hero.hero})`}
+                                            </Menu.Item>
                                         })
                                     }
                                 </Menu.SubMenu>
@@ -147,9 +165,41 @@ class IndexPage extends React.Component {
 
                 <Divider>With Text</Divider>
 
-                <Content style={{padding: '0 50px'}}>
-                    <div style={{background: '#fff', padding: 24, minHeight: 280}}>Content</div>
-                </Content>
+                <Spin spinning={this.state.loadingIndex} size={'large'}>
+
+                    <Content style={{padding: '0 50px'}}>
+                        {
+                            [1, 2, 3].map((y) => {
+                                return (
+                                    <Row gutter={16} style={{marginTop: 20}}>
+                                        {
+                                            [1, 2, 3, 4].map((x) => {
+                                                return (
+                                                    <Col span={6}>
+                                                        <Card
+                                                            style={{width: 300}}
+                                                            cover={<img alt="example"
+                                                                        src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"/>}
+                                                            actions={[<Icon type="heart"/>, <Icon type="eye"/>,
+                                                                <Icon type="ellipsis"/>]}
+                                                        >
+                                                            <Meta
+                                                                avatar={<Avatar
+                                                                    src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
+                                                                title="Card title"
+                                                                description="This is the description"
+                                                            />
+                                                        </Card>
+                                                    </Col>
+                                                )
+                                            })
+                                        }
+                                    </Row>
+                                )
+                            })
+                        }
+                    </Content>
+                </Spin>
 
                 <Footer style={{textAlign: 'center'}}>
                     {this.createFooter()}

@@ -1,6 +1,9 @@
 import React from 'react';
 import {connect} from 'dva';
-import {Layout, Menu, Divider, Icon, Input} from 'antd';
+import {Layout, Menu, Divider, Icon, Input, Avatar} from 'antd';
+import * as firebase from 'firebase';
+import firebase_config from '../config/firebase';
+import * as _ from 'lodash';
 
 const {Header, Content, Footer} = Layout;
 
@@ -30,14 +33,30 @@ class IndexPage extends React.Component {
         super(...props);
 
         this.state = {
-            current: 'home',
+            currentMenu: 'home',
+            heroes: []
         };
+    }
+
+    componentDidMount() {
+        firebase.initializeApp(firebase_config);
+
+        const heroesRef = firebase.database().ref().child('heroes');
+
+        heroesRef.once('value').then((snapshot) => {
+            this.setState({
+                heroes: snapshot.val()
+            });
+        });
+    }
+
+    componentWillMount() {
     }
 
     handleClickMenu = (e) => {
         console.log('click ', e);
         this.setState({
-            current: e.key,
+            currentMenu: e.key,
         });
     };
 
@@ -50,6 +69,33 @@ class IndexPage extends React.Component {
         return ''
     }
 
+    createMenuHeroes() {
+        return _.map(_.groupBy(this.state.heroes, "afiliation"), (listHeroes, title) => {
+            return (
+                <Menu.SubMenu key={'menu' + title} title={title}>
+                    {
+                        _.map(_.groupBy(listHeroes, "attribute"), (list2, title2) => {
+
+                            return (
+                                <Menu.SubMenu key={'menu' + title2} title={title2}>
+                                    {
+                                        list2.map((hero) => {
+                                            const url = "https://firebasestorage.googleapis.com/v0/b/the-baltazartv-dota-1.appspot.com/o/heroes%2F" + hero.id + ".png?alt=media&token=f2add21a-3458-4bd6-9c1f-f0d4ad10c620"
+                                            return <Menu.Item key={hero.id}>
+                                                <Avatar shape="square" size="large" src={url}/>
+                                                {hero.name}
+                                                </Menu.Item>
+                                        })
+                                    }
+                                </Menu.SubMenu>
+                            )
+                        })
+                    }
+                </Menu.SubMenu>
+            )
+        });
+    }
+
     render() {
         return (
             <Layout className="layout" style={{width: '100%', height: '100%'}}>
@@ -58,7 +104,7 @@ class IndexPage extends React.Component {
                     <div className="logo"/>
                     <Menu
                         onClick={this.handleClickMenu}
-                        selectedKeys={[this.state.current]}
+                        selectedKeys={[this.state.currentMenu]}
                         mode="horizontal"
                     >
                         <Menu.Item key="search">
@@ -93,18 +139,7 @@ class IndexPage extends React.Component {
                         </Menu.SubMenu>
 
                         <Menu.SubMenu title={<span><Icon type="contacts"/>Heroes</span>}>
-                            <Menu.ItemGroup title="Item 1">
-                                <Menu.Item key="setting:1">Option 1</Menu.Item>
-                                <Menu.Item key="setting:2">Option 2</Menu.Item>
-                            </Menu.ItemGroup>
-                            <Menu.ItemGroup title="Item 2">
-                                <Menu.Item key="setting:3">Option 3</Menu.Item>
-                                <Menu.Item key="setting:4">Option 4</Menu.Item>
-                            </Menu.ItemGroup>
-                            <Menu.SubMenu key="sub3" title="Submenu">
-                                <Menu.Item key="7">Option 7</Menu.Item>
-                                <Menu.Item key="8">Option 8</Menu.Item>
-                            </Menu.SubMenu>
+                            {this.createMenuHeroes()}
                         </Menu.SubMenu>
 
                     </Menu>

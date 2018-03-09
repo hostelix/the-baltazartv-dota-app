@@ -5,41 +5,64 @@ import {isEmpty} from 'lodash';
 class AppService {
     constructor() {
         this.youtubeService = new YoutubeService();
-        this.playlists = {};
+        this.dataChannel = {};
     }
 
-    getPlaylist() {
+    loadDataChannel() {
         return new Promise((resolve, reject) => {
-            this.youtubeService.getChannel({
-                part: "contentDetails",
-                forUsername: username_youtube
-            }).then((response) => {
-                resolve(response.data.items[0].contentDetails.relatedPlaylists);
+            this.getDataChannel().then((data) => {
+                this.dataChannel = data;
+                resolve(true);
             }).catch((err) => {
                 reject(err);
             });
         });
     }
 
-    getVideos(params) {
-        if (isEmpty(this.playlists)) {
-            return this.getPlaylist().then((playlists) => {
-
-                this.playlists = playlists;
-                return this.youtubeService.getVideos({
-                    part: "id,snippet,contentDetails",
-                    playlistId: playlists.uploads,
-                    maxResults: 12,
-                    ...params
+    getDataChannel() {
+        return new Promise((resolve, reject) => {
+            if (isEmpty(this.dataChannel)) {
+                this.youtubeService.getChannel({
+                    part: "contentDetails",
+                    forUsername: username_youtube
+                }).then((response) => {
+                    resolve(response.data.items[0]);
+                }).catch((err) => {
+                    reject(err);
                 });
-            });
-        }
+            } else {
+                resolve(this.dataChannel);
+            }
+        });
+    }
 
-        return this.youtubeService.getVideos({
-            part: "id,snippet,contentDetails",
-            playlistId: this.playlists.uploads,
-            maxResults: 12,
-            ...params
+    getPlaylist(key) {
+        return this.dataChannel.contentDetails.relatedPlaylists[key];
+    }
+
+    getChannelId() {
+        return this.dataChannel.id;
+    }
+
+    getVideos(params) {
+        return this.loadDataChannel().then(() => {
+            return this.youtubeService.getVideos({
+                part: "id,snippet,contentDetails",
+                playlistId: this.getPlaylist('uploads'),
+                maxResults: 12,
+                ...params
+            });
+        });
+    }
+
+    search(params) {
+        return this.loadDataChannel().then(() => {
+            return this.youtubeService.search({
+                part: "id,snippet",
+                channelId: this.getChannelId(),
+                maxResults: 12,
+                ...params
+            });
         });
     }
 }

@@ -1,9 +1,11 @@
 import YoutubeService from '../services/youtube';
 import {username_youtube} from "../config/config";
+import {isEmpty} from 'lodash';
 
 class AppService {
     constructor() {
         this.youtubeService = new YoutubeService();
+        this.playlists = {};
     }
 
     getPlaylist() {
@@ -19,21 +21,25 @@ class AppService {
         });
     }
 
-    getRecentVideos() {
-        return new Promise((resolve, reject) => {
-            this.getPlaylist().then((playlists) => {
+    getVideos(params) {
+        if (isEmpty(this.playlists)) {
+            return this.getPlaylist().then((playlists) => {
 
-                this.youtubeService.getVideos({
+                this.playlists = playlists;
+                return this.youtubeService.getVideos({
                     part: "id,snippet,contentDetails",
                     playlistId: playlists.uploads,
-                    maxResults: 12
-                }).then((response) => {
-                    resolve(response);
+                    maxResults: 12,
+                    ...params
                 });
-
-            }).catch((err) => {
-                reject(err);
             });
+        }
+
+        return this.youtubeService.getVideos({
+            part: "id,snippet,contentDetails",
+            playlistId: this.playlists.uploads,
+            maxResults: 12,
+            ...params
         });
     }
 }

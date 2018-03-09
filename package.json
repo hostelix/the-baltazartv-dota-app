@@ -20,6 +20,7 @@
   "homepage": "https://github.com/hostelix/the-baltazartv-dota-app#readme",
   "dependencies": {
     "antd": "^3.2.2",
+    "axios": "^0.18.0",
     "babel-plugin-import": "^1.6.5",
     "dva": "^2.1.0",
     "firebase": "^4.10.1",

@@ -7,17 +7,14 @@ import {
     Icon,
     Input,
     Avatar,
-    Card,
-    Col,
-    Row,
     Spin
 } from 'antd';
 import * as firebase from 'firebase';
 import firebase_config from '../config/firebase';
 import * as _ from 'lodash';
+import VideoList from '../components/VideoList';
 
 const {Header, Content, Footer} = Layout;
-const {Meta} = Card;
 
 const data_menu = {
     streaks: [
@@ -47,8 +44,10 @@ class IndexPage extends React.Component {
         this.state = {
             currentMenu: 'home',
             heroes: [],
-            loadingIndex: false
+            spinningActive: false
         };
+
+        this.handleSpinning = this.handleSpinning.bind(this);
     }
 
     componentDidMount() {
@@ -64,6 +63,9 @@ class IndexPage extends React.Component {
     }
 
     componentWillMount() {
+        this.setState({
+            spinningActive: true
+        });
     }
 
     handleClickMenu = (e) => {
@@ -72,6 +74,12 @@ class IndexPage extends React.Component {
             currentMenu: e.key,
         });
     };
+
+    handleSpinning(status) {
+        this.setState({
+            spinningActive: status
+        });
+    }
 
     createFooter() {
         const current_year = new Date().getFullYear();
@@ -163,41 +171,11 @@ class IndexPage extends React.Component {
                     </Menu>
                 </Header>
 
-                <Divider>With Text</Divider>
+                <Divider/>
 
-                <Spin spinning={this.state.loadingIndex} size={'large'}>
-
+                <Spin spinning={this.state.spinningActive} size={'large'}>
                     <Content style={{padding: '0 50px'}}>
-                        {
-                            [1, 2, 3].map((y) => {
-                                return (
-                                    <Row gutter={16} style={{marginTop: 20}}>
-                                        {
-                                            [1, 2, 3, 4].map((x) => {
-                                                return (
-                                                    <Col span={6}>
-                                                        <Card
-                                                            style={{width: 300}}
-                                                            cover={<img alt="example"
-                                                                        src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"/>}
-                                                            actions={[<Icon type="heart"/>, <Icon type="eye"/>,
-                                                                <Icon type="ellipsis"/>]}
-                                                        >
-                                                            <Meta
-                                                                avatar={<Avatar
-                                                                    src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>}
-                                                                title="Card title"
-                                                                description="This is the description"
-                                                            />
-                                                        </Card>
-                                                    </Col>
-                                                )
-                                            })
-                                        }
-                                    </Row>
-                                )
-                            })
-                        }
+                        <VideoList spinning={this.handleSpinning}/>
                     </Content>
                 </Spin>
 

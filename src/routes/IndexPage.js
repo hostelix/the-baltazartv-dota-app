@@ -35,6 +35,23 @@ const data_menu = {
     ]
 };
 
+const styles = {
+    menuHeader: {
+        //position: 'fixed',
+        width: '100%',
+        backgroundColor: "white"
+    },
+    content: {
+        padding: '0 50px',
+        marginTop: 40
+    },
+    contentDiv: {
+        background: '#fff',
+        padding: 24,
+        minHeight: 380
+    }
+};
+
 
 class IndexPage extends React.Component {
 
@@ -48,6 +65,7 @@ class IndexPage extends React.Component {
         };
 
         this.handleSpinning = this.handleSpinning.bind(this);
+        this.handleSearch = this.handleSearch.bind(this);
     }
 
     componentDidMount() {
@@ -74,6 +92,12 @@ class IndexPage extends React.Component {
             currentMenu: e.key,
         });
     };
+
+    handleSearch = (event) => {
+        if (event.key === "Enter") {
+            console.log(event.target);
+        }
+    }
 
     handleSpinning(status) {
         this.setState({
@@ -125,7 +149,7 @@ class IndexPage extends React.Component {
     render() {
         return (
             <Layout className="layout" style={{width: '100%', height: '100%'}}>
-                <Header style={{width: '100%', "background-color": "white"}}>
+                <Header style={styles.menuHeader}>
 
                     <div className="logo"/>
                     <Menu
@@ -137,7 +161,7 @@ class IndexPage extends React.Component {
                             <Input
                                 placeholder="Search videos"
                                 prefix={<Icon type="search" style={{color: 'rgba(0,0,0,.25)'}}/>}
-                                onChange={this.onSearchVideos}
+                                onKeyPress={this.handleSearch}
                             />
                         </Menu.Item>
 
@@ -174,8 +198,10 @@ class IndexPage extends React.Component {
                 <Divider/>
 
                 <Spin spinning={this.state.spinningActive} size={'large'}>
-                    <Content style={{padding: '0 50px'}}>
-                        <VideoList spinning={this.handleSpinning}/>
+                    <Content style={styles.content}>
+                        <div style={styles.contentDiv}>
+                            <VideoList spinning={this.handleSpinning}/>
+                        </div>
                     </Content>
                 </Spin>
 

@@ -61,7 +61,8 @@ class IndexPage extends React.Component {
         this.state = {
             currentMenu: 'home',
             heroes: [],
-            spinningActive: false
+            spinningActive: false,
+            query: ""
         };
 
         this.handleSpinning = this.handleSpinning.bind(this);
@@ -95,9 +96,11 @@ class IndexPage extends React.Component {
 
     handleSearch = (event) => {
         if (event.key === "Enter") {
-            console.log(event.target);
+            this.setState({
+                query: event.target.value
+            });
         }
-    }
+    };
 
     handleSpinning(status) {
         this.setState({
@@ -105,10 +108,10 @@ class IndexPage extends React.Component {
         });
     }
 
-    createFooter() {
+    createFooter = () => {
         const current_year = new Date().getFullYear();
         return `The BaltazarTv App ©${ current_year } Created by `;
-    }
+    };
 
     onSearchVideos() {
         return ''
@@ -200,7 +203,7 @@ class IndexPage extends React.Component {
                 <Spin spinning={this.state.spinningActive} size={'large'}>
                     <Content style={styles.content}>
                         <div style={styles.contentDiv}>
-                            <VideoList spinning={this.handleSpinning}/>
+                            <VideoList spinning={this.handleSpinning} querySearch={this.state.query}/>
                         </div>
                     </Content>
                 </Spin>

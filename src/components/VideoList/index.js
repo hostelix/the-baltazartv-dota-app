@@ -1,7 +1,6 @@
 import React from 'react';
 import {Card, Icon, Avatar, List, Spin} from 'antd';
 import {connect} from 'dva';
-import AppService from '../../services/app';
 import InfiniteScroll from 'react-infinite-scroller';
 import PropTypes from 'prop-types';
 
@@ -11,61 +10,50 @@ class VideoList extends React.Component {
     constructor(props) {
         super(...props);
 
-        this.state = {
-            videos: [],
-            loadingScroll: false,
-            hasMore: false,
-            nextPageToken: ""
-        };
-
-        this.appService = new AppService();
         this.handleLoadVideos = this.handleLoadVideos.bind(this);
-        this.handleSearch = this.handleSearch(this);
     }
 
     handleLoadVideos() {
-        this.appService.getVideos({
-            pageToken: this.state.nextPageToken,
-            maxResults: 8
-        }).then((response) => {
+        const {dispatch} = this.props;
 
-            this.setState({
-                videos: this.state.videos.concat(response.data.items),
-                hasMore: true,
-                nextPageToken: response.data.nextPageToken
+        setTimeout(() => {
+            dispatch({
+                type: 'video/fetchMore',
             });
-
-        });
+        }, 500);
     }
 
-    handleSearch() {
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.querySearch !== "") {
 
-    }
+            const {dispatch} = this.props;
 
-    componentDidMount() {
+            dispatch({
+                type: 'video/search',
+                payload: {query: nextProps.querySearch}
+            });
+        }
     }
 
     componentWillMount() {
-        this.appService.getVideos({maxResults: 8}).then((response) => {
+        const {dispatch} = this.props;
 
-            this.setState({
-                videos: response.data.items,
-                hasMore: true,
-                nextPageToken: response.data.nextPageToken
-            });
-
-            this.props.spinning(false);
+        dispatch({
+            type: 'video/fetchInit',
         });
+
+        this.props.spinning(this.props.video.loading);
     }
 
     render() {
+        const {video} = this.props;
         return (
             <div>
                 <InfiniteScroll
                     initialLoad={false}
                     pageStart={0}
                     loadMore={this.handleLoadVideos}
-                    hasMore={this.state.hasMore}
+                    hasMore={!video.loading && video.hasMore}
                     useWindow={true}
                     loader={<Spin size="large"
                                   style={{
@@ -77,14 +65,15 @@ class VideoList extends React.Component {
                 >
                     <List
                         grid={{gutter: 16, column: 4}}
-                        dataSource={this.state.videos}
+                        dataSource={video.data}
+                        loading={video.loading}
                         renderItem={video => (
                             <List.Item key={video.id}>
                                 <Card
                                     style={{width: 300}}
                                     cover={<img alt="example"
                                                 src={video.snippet.thumbnails.medium.url}/>}
-                                    actions={[<Icon type="heart"/>, <Icon type="eye"/>,
+                                    actions={[<Icon type="heart"/>, <div>123 <Icon type="eye"/></div>,
                                         <Icon type="ellipsis"/>]}
                                 >
                                     <Meta
@@ -104,7 +93,10 @@ class VideoList extends React.Component {
 }
 
 VideoList.propTypes = {
+    querySearch: PropTypes.string,
     spinning: PropTypes.func
 };
 
-export default connect()(VideoList);
+export default connect(state => ({
+    video: state.video,
+}))(VideoList);

@@ -1,30 +1,36 @@
+import Request from "../utils/request";
 import {API_KEY, api} from '../config/youtube';
-import axios from 'axios';
+import {CHANNEL_ID, PLAYLIST_ID, USERNAME_YOUTUBE} from "../config/config";
 
-class YoutubeService {
-    constructor() {
-        this.options = {
-            key: API_KEY
-        };
-    }
-
-    getChannel(params) {
-        return axios.get(api.channels, {
-            params: {
-                ...this.options,
-                ...params
-            }
-        });
-    }
-
-    getVideos(params) {
-        return axios.get(api.playListItems, {
-            params: {
-                ...this.options,
-                ...params
-            }
-        });
-    }
+export async function fetchChannel() {
+    return await Request.get(api.channels, {
+        params: {
+            key: API_KEY,
+            part: "contentDetails",
+            forUsername: USERNAME_YOUTUBE
+        }
+    }).then(response => response.data);
 }
 
-export default YoutubeService;
+export async function fetchVideos(params) {
+    return await Request.get(api.playListItems, {
+        params: {
+            part: "id,snippet,contentDetails",
+            playlistId: PLAYLIST_ID,
+            maxResults: 12,
+            ...params
+        }
+    }).then(response => response.data);
+}
+
+export async function searchVideos(params) {
+    return await Request.get(api.search, {
+        params: {
+            part: "id,snippet",
+            channelId: CHANNEL_ID,
+            maxResults: 12,
+            ...params
+        }
+    }).then(response => response.data);
+}
+

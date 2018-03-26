@@ -20,6 +20,7 @@ export async function fetchVideos(params) {
             part: "id,snippet,contentDetails",
             playlistId: PLAYLIST_ID,
             maxResults: 12,
+            order: 'date',
             ...params
         }
     }).then(response => response.data);
@@ -31,6 +32,7 @@ export async function searchVideos(params) {
             part: "id,snippet",
             channelId: CHANNEL_ID,
             maxResults: 12,
+            order: 'date',
             ...params
         }
     }).then(response => response.data);

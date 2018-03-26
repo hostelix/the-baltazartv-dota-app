@@ -10,25 +10,37 @@ class VideoList extends React.Component {
     constructor(props) {
         super(...props);
 
+        this.state = {
+            query: ''
+        };
+
         this.handleLoadVideos = this.handleLoadVideos.bind(this);
     }
+
+    static propTypes = {
+        querySearch: PropTypes.string,
+        spinning: PropTypes.func
+    };
 
     handleLoadVideos() {
         const {dispatch} = this.props;
 
-        setTimeout(() => {
-            dispatch({
-                type: 'video/fetchMore',
-            });
-        }, 500);
+        return dispatch({
+            type: 'video/loadMore',
+        });
+
     }
 
     componentWillReceiveProps(nextProps) {
-        if (nextProps.querySearch !== "") {
+        const {querySearch} = nextProps;
+
+        if (querySearch !== this.state.query) {
 
             const {dispatch} = this.props;
 
-            dispatch({
+            this.setState({query: querySearch});
+
+            return dispatch({
                 type: 'video/search',
                 payload: {query: nextProps.querySearch}
             });
@@ -39,7 +51,7 @@ class VideoList extends React.Component {
         const {dispatch} = this.props;
 
         dispatch({
-            type: 'video/fetchInit',
+            type: 'video/fetch',
         });
 
         this.props.spinning(this.props.video.loading);
@@ -47,6 +59,16 @@ class VideoList extends React.Component {
 
     render() {
         const {video} = this.props;
+        const spin = (
+            <Spin size="large"
+                  style={{
+                      position: "absolute",
+                      margin: "10px 0 40px 0",
+                      bottom: "-40px",
+                      left: "50%"
+                  }}/>
+        );
+
         return (
             <div>
                 <InfiniteScroll
@@ -55,13 +77,7 @@ class VideoList extends React.Component {
                     loadMore={this.handleLoadVideos}
                     hasMore={!video.loading && video.hasMore}
                     useWindow={true}
-                    loader={<Spin size="large"
-                                  style={{
-                                      position: "absolute",
-                                      margin: "10px 0 40px 0",
-                                      bottom: "-40px",
-                                      left: "50%"
-                                  }}/>}
+                    loader={spin}
                 >
                     <List
                         grid={{gutter: 16, column: 4}}
@@ -91,11 +107,6 @@ class VideoList extends React.Component {
         )
     }
 }
-
-VideoList.propTypes = {
-    querySearch: PropTypes.string,
-    spinning: PropTypes.func
-};
 
 export default connect(state => ({
     video: state.video,

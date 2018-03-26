@@ -1,4 +1,7 @@
-import {fetchVideos} from "../services/youtube";
+import {fetchVideos, searchVideos} from "../services/youtube";
+
+const MODE_SEARCH = 'search';
+const MODE_FETCH = 'fetch';
 
 export default {
     namespace: 'video',
@@ -8,63 +11,89 @@ export default {
         loading: false,
         hasMore: false,
         nextPageToken: "",
-        nextPageTokenSearch: "",
+        mode: MODE_FETCH,
+        query: ''
     },
 
     effects: {
-        * fetchInit(_, {call, put}) {
+        * fetch(_, {call, put}) {
 
-            yield put({
-                type: 'loadingOn'
-            });
+            yield put({type: 'loadingOn'});
+            yield put({type: 'clearData'});
+            yield put({type: 'switchMode', payload: MODE_FETCH});
 
-            const response = yield call(fetchVideos, {maxResults: 8}); //no-lone-blocks
+            const response = yield call(fetchVideos, {maxResults: 8});
 
-            yield  put({
-                type: 'save',
-                payload: response
-            });
-
-            yield put({
-                type: 'loadingOff'
-            });
+            yield put({type: 'save', payload: response});
+            yield put({type: 'loadingOff'});
         },
-        * fetchMore(_, {call, put, select}) {
-            yield put({
-                type: 'loadingOn'
-            });
+        * search(action, {call, put}) {
 
-            const nextPageToken = yield select(state => state.video.nextPageToken);
+            yield put({type: 'loadingOn'});
+            yield put({type: 'clearData'});
+            yield put({type: 'switchMode', payload: MODE_SEARCH});
 
-            const response = yield call(fetchVideos, {maxResults: 8, pageToken: nextPageToken});
+            const {payload} = action;
 
-            yield  put({
-                type: 'save',
-                payload: response
-            });
+            const response = yield call(searchVideos, {maxResults: 8, q: payload.query});
 
-            yield put({
-                type: 'loadingOff'
-            });
+            yield put({type: 'save', payload: {...response, query: payload.query}});
+            yield put({type: 'loadingOff'});
+        },
+        * loadMore(_, {call, put, select}) {
+
+            yield put({type: 'loadingOn'});
+
+            const {mode, nextPageToken, query} = yield select(state => state.video);
+
+            let response = {};
+
+            switch (mode) {
+                case MODE_FETCH: {
+                    response = yield call(fetchVideos, {maxResults: 8, pageToken: nextPageToken});
+                    break;
+                }
+
+                case MODE_SEARCH: {
+                    response = yield call(searchVideos, {maxResults: 8, pageToken: nextPageToken, q: query});
+                    break;
+                }
+
+                default: {
+                    response = yield call(fetchVideos, {maxResults: 8, pageToken: nextPageToken});
+                }
+            }
+
+            yield put({type: 'save', payload: response});
+            yield put({type: 'loadingOff'});
         },
     },
 
     reducers: {
         'save'(state, action) {
             const {payload} = action;
+            const {items, nextPageToken, query} = payload;
 
             return {
                 ...state,
-                data: state.data.concat(payload.items),
-                nextPageToken: payload.nextPageToken,
-                hasMore: true
+                data: state.data.concat(items),
+                nextPageToken: nextPageToken,
+                hasMore: true,
+                query: query
             }
+        },
+        'clearData'(state) {
+            return {...state, data: []}
         },
         'loadingOn'(state) {
             return {...state, loading: true};
         },
         'loadingOff'(state) {
             return {...state, loading: false};
+        },
+        'switchMode'(state, action) {
+            const {payload} = action;
+            return {...state, mode: payload};
         }
     },
 };

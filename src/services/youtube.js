@@ -33,6 +33,7 @@ export async function searchVideos(params) {
             channelId: CHANNEL_ID,
             maxResults: 12,
             order: 'date',
+            type: 'video',
             ...params
         }
     }).then(response => response.data);

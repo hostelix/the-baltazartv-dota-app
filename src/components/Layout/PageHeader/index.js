@@ -17,7 +17,8 @@ class PageHeader extends React.Component {
 
         this.state = {
             currentMenu: 'menu',
-            heroes: []
+            heroes: [],
+            query: ''
         }
     }
 
@@ -71,13 +72,18 @@ class PageHeader extends React.Component {
     };
 
     handleClickMenu = (event) => {
-        this.props.onClickMenu(event);
+        this.props.onClickMenu(event, this.state.currentMenu);
+
+        this.setState({
+            currentMenu: event.key
+        });
     };
 
     render() {
         const menuKillCombos = killCombos.map((item) => {
             return (<Menu.Item key={item.key}><Icon type="double-right"/>{item.name}</Menu.Item>);
         });
+
         const menuStreaks = streaks.map((item) => {
             return (<Menu.Item key={item.key}><Icon type="double-right"/>{item.name}</Menu.Item>);
         });

@@ -1,5 +1,5 @@
 import React from 'react';
-import {Card, Icon, Avatar, List, Spin} from 'antd';
+import {Avatar, Card, Icon, List, Spin} from 'antd';
 import {connect} from 'dva';
 import InfiniteScroll from 'react-infinite-scroller';
 import PropTypes from 'prop-types';
@@ -10,41 +10,25 @@ class VideoList extends React.Component {
     constructor(props) {
         super(...props);
 
-        this.state = {
-            query: ''
-        };
+        this.state = {};
 
         this.handleLoadVideos = this.handleLoadVideos.bind(this);
     }
 
     static propTypes = {
-        querySearch: PropTypes.string,
         spinning: PropTypes.func
     };
 
     handleLoadVideos() {
+        if (!this.props.video.hasMore) {
+            return;
+        }
+
         const {dispatch} = this.props;
 
         return dispatch({
             type: 'video/loadMore',
         });
-
-    }
-
-    componentWillReceiveProps(nextProps) {
-        const {querySearch} = nextProps;
-
-        if (querySearch !== this.state.query) {
-
-            const {dispatch} = this.props;
-
-            this.setState({query: querySearch});
-
-            return dispatch({
-                type: 'video/search',
-                payload: {query: nextProps.querySearch}
-            });
-        }
     }
 
     componentWillMount() {
@@ -60,7 +44,7 @@ class VideoList extends React.Component {
     render() {
         const {video} = this.props;
         const spin = (
-            <Spin size="large"
+            <Spin size={'large'}
                   style={{
                       position: "absolute",
                       margin: "10px 0 40px 0",

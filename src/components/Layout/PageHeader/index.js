@@ -1,17 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'dva';
-import {
-    Input,
-    Menu,
-    Icon,
-    Avatar,
-    Layout
-} from 'antd';
+import {Avatar, Icon, Input, Layout, Menu} from 'antd';
 import * as _ from 'lodash';
 import * as firebase from 'firebase';
 import firebase_config from '../../../config/firebase';
-import {streaks, killCombos} from "../../../data/menu";
+import {killCombos, streaks} from "../../../data/menu";
 import {capitalize} from "../../../utils/index";
 import styles from './index.css';
 
@@ -28,7 +22,8 @@ class PageHeader extends React.Component {
     }
 
     static proptypes = {
-        onSearch: PropTypes.func
+        onSearch: PropTypes.func,
+        onClickMenu: PropTypes.func
     };
 
     componentWillMount() {
@@ -72,14 +67,11 @@ class PageHeader extends React.Component {
     };
 
     handleSearch = (event) => {
-
-        if (event.key === "Enter") {
-            this.props.onSearch(event);
-        }
-
+        this.props.onSearch(event);
     };
 
-    handleClickMenu = () => {
+    handleClickMenu = (event) => {
+        this.props.onClickMenu(event);
     };
 
     render() {

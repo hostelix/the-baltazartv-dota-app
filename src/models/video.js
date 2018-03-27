@@ -1,4 +1,5 @@
 import {fetchVideos, searchVideos} from "../services/youtube";
+import * as _ from 'lodash';
 
 const MODE_SEARCH = 'search';
 const MODE_FETCH = 'fetch';
@@ -9,7 +10,7 @@ export default {
     state: {
         data: [],
         loading: false,
-        hasMore: false,
+        hasMore: true,
         nextPageToken: "",
         mode: MODE_FETCH,
         query: ''
@@ -27,7 +28,7 @@ export default {
             yield put({type: 'save', payload: response});
             yield put({type: 'loadingOff'});
         },
-        * search(action, {call, put}) {
+        * search(action, {call, put, select}) {
 
             yield put({type: 'loadingOn'});
             yield put({type: 'clearData'});
@@ -73,13 +74,18 @@ export default {
         'save'(state, action) {
             const {payload} = action;
             const {items, nextPageToken, query} = payload;
+            let more = true;
+
+            if (!_.has(payload, "nextPageToken")) {
+                more = false;
+            }
 
             return {
                 ...state,
                 data: state.data.concat(items),
                 nextPageToken: nextPageToken,
-                hasMore: true,
-                query: query
+                query: query,
+                hasMore: more
             }
         },
         'clearData'(state) {
